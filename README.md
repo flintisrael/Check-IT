@@ -1,1 +1,1 @@
-See Check-IT Wiki for Description, Documents and UML Diagrams.
+See Check-IT [Wiki](https://github.com/flintisrael/Check-IT/wiki) for Description, Documents and UML Diagrams.
