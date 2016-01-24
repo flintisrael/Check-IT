@@ -1,0 +1,3 @@
+[13-Dec-2015 09:41:05 America/Chicago] PHP Warning:  mysql_connect(): Host '108.167.160.81' is not allowed to connect to this MySQL server in /home2/checkitg/public_html/checkit/database/connect.php on line 9
+[13-Dec-2015 09:46:13 America/Chicago] PHP Warning:  mysql_connect(): Unknown MySQL server host 'mysql.checkitgroup.com' (0) in /home2/checkitg/public_html/checkit/database/connect.php on line 9
+[13-Dec-2015 09:46:40 America/Chicago] PHP Warning:  mysql_connect(): Access denied for user 'checkitg_admin'@'108.167.160.84' (using password: YES) in /home2/checkitg/public_html/checkit/database/connect.php on line 9
