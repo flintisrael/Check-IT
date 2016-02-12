@@ -4,7 +4,13 @@
 include ($_SERVER['DOCUMENT_ROOT']."/checkit/login/login.php");
 
 if(isset($_SESSION['login_user'])){
-    header("location: profile.php");
+    if($_SESSION['accountTypeName'] == 'Regular'){
+        header("location: profile.php");
+    }
+    if($_SESSION['accountTypeName'] == 'Business'){
+        header("location: business/businessmap.php");
+    }
+
    // echo getcwd() . "\n";
 }
 ?>

@@ -15,6 +15,10 @@ session_destroy(); // Destroying All Sessions
         else if ($_POST['pass'] != $_POST['cPass']) {
             $error = "Passwords must be the same";
         }
+        else if ($_POST['accountType'] == 'null'){
+
+            $error = "Account type mustn't be blanked";
+        }
         else
         {
 
@@ -29,6 +33,7 @@ session_destroy(); // Destroying All Sessions
             $password=$_POST['pass'];
             $cpassword=$_POST['cPass'];
             $fullname=$fname .' ' .$lname;
+            $account = $_POST['accountType'];
 
             $address =$_POST['address'];
             $prepAddr = str_replace(' ','+',$address);
@@ -38,13 +43,42 @@ session_destroy(); // Destroying All Sessions
             $longitude = $output->results[0]->geometry->location->lng;
          //   die($address);
 
-            $query  = "insert into Users(State,FullName,FirstName,LastName,PhoneNum,EmailAddress,Gender,Description,LoginName,Password,LatCoordinate,LongCoordinate,Address)
-                                  values (1,'$fullname','$fname','$lname','$phone','$mail','$gender','$desc','$username','$password','$latitude','$longitude','$address')";
+            $typeQuery = "select id from AccountType where state = 1 and name = '$account' ORDER BY id DESC LIMIT 1";
+
+            $result = mysql_query($typeQuery);
+            //die(mysql_result($result, 0));
+            $accountId =  mysql_result($result, 0);
+            /*
+            $accountId = null;
+            if (!$result) {
+                echo 'Could not run query: ' . mysql_error();
+                exit;
+            }
+            if (mysql_num_rows($result) > 0) {
+                while ($row = mysql_fetch_assoc($result)) {
+                    $accountId = $row["id"];
+
+                }
+            }
+            */
+
+
+            $query  = "insert into Users(State,FullName,FirstName,LastName,PhoneNum,EmailAddress,Gender,Description,LoginName,Password,LatCoordinate,LongCoordinate,Address,refTypeAccountId)
+                                  values (1,'$fullname','$fname','$lname','$phone','$mail','$gender','$desc','$username','$password','$latitude','$longitude','$address','$accountId')";
 
             mysql_query($query);
             session_start(); // Starting Session
             $_SESSION['login_user']=$username; // Initializing Session
-            header("location: ../profile.php");
+            $_SESSION['accountTypeName'] = $account;
+            if($account == 'Regular'){
+                header("location: ../profile.php");
+            }
+            if($account == 'Business'){
+                header("location: ../business/businessmap.php");
+            }
+
+
+
         }
 
       //  header("location: https://mail.google.com/mail/u/0/?tab=wm#trash");
@@ -162,6 +196,7 @@ session_destroy(); // Destroying All Sessions
                     <label for="login"> Login Name <span class="glyphicon glyphicon-user"></label>
                 </div>
 
+
                 <div class="form-group">
                     <input id="password" name="pass" value="<?=( isset( $_POST['pass'] ) ? $_POST['pass'] : '' )?>" type="password" class="form-control"  required>
                     <label for="sphone">Password <span class="glyphicon glyphicon-eye-open"></label>
@@ -222,46 +257,63 @@ session_destroy(); // Destroying All Sessions
                     <input id="Address" name="address" value="<?=( isset( $_POST['address'] ) ? $_POST['address'] : '' )?>" type="tel"  class="form-control" style="width:400px";  required>
                     <label for="Address">Flat NO/House No</label>
                 </div>
-                <!--
-                <div class="form-group">
-                    <input id="LandMark" name="LandMark" type="text" class="form-control" placeHolder="Land Mark">
-                    <label for="LandMark">Land Mark</label>
-                </div>
+
                 <br><br>
-                <p3>(Enter Pincode/Area to pick your nearest location)<span class="glyphicon glyphicon-map-marker"></p3>
-                <br><br>
-                <div class="form-group" style="width: 600px" >
-                    <input input id="autocomplete" name="LocationPicker" type="text" onFocus="geolocate()" style=" moz-border-radius: 22px;border-radius: 7px;"  >
-                    <label for="LocationPicker">Location Picker</label>
-                </div>
-                <br><br>
-                <div class="form-group">
-                    <input id="route" name="route" type="tel" class="form-control"   required disabled="true">
-                    <label for="route">Route/Locality</label>
-                </div>
-                <div class="form-group">
-                    <input id="locality" name="locality" type="tel" class="form-control"   required disabled="true">
-                    <label for="locality">City/Town</label>
-                </div>
+                <p1>Account Type</p1>
                 <br>
                 <div class="form-group">
-                    <input id="administrative_area_level_2" name="administrative_area_level_2" type="tel" class="form-control"   required disabled="true">
-                    <label for="administrative_area_level_2">District</label>
+                <select class="form-control" id="accountType" name="accountType" >
+
+                    <option id="" Value="null" style="color:gray"  checked >Select Type</option>
+                    <option id="" Value="Regular" style="color:#000000">Regular Account</option>
+                    <option id="" Value="Business"  style="color:black">Business Account</option>
+
+                </select>
                 </div>
-                <div class="form-group">
-                    <input id="administrative_area_level_1" name="administrative_area_level_1" type="tel" class="form-control"   required disabled="true">
-                    <label for="administrative_area_level_1">State</label>
-                </div>
-                <br>
-                <div class="form-group">
-                    <input id="country" name="country" type="text" class="form-control"   required disabled="true">
-                    <label for="country">Country</label>
-                </div>
-                <div class="form-group">
-                    <input id="postal_code" name="postal_code" type="tel" class="form-control"   required disabled="true">
-                    <label for="postal_code">Pin Code</label>
-                </div>
-                   -->
+
+
+
+                <!--<span class="clearfix"></span>
+
+               <div class="form-group">
+                   <input id="LandMark" name="LandMark" type="text" class="form-control" placeHolder="Land Mark">
+                   <label for="LandMark">Land Mark</label>
+               </div>
+               <br><br>
+               <p3>(Enter Pincode/Area to pick your nearest location)<span class="glyphicon glyphicon-map-marker"></p3>
+               <br><br>
+               <div class="form-group" style="width: 600px" >
+                   <input input id="autocomplete" name="LocationPicker" type="text" onFocus="geolocate()" style=" moz-border-radius: 22px;border-radius: 7px;"  >
+                   <label for="LocationPicker">Location Picker</label>
+               </div>
+               <br><br>
+               <div class="form-group">
+                   <input id="route" name="route" type="tel" class="form-control"   required disabled="true">
+                   <label for="route">Route/Locality</label>
+               </div>
+               <div class="form-group">
+                   <input id="locality" name="locality" type="tel" class="form-control"   required disabled="true">
+                   <label for="locality">City/Town</label>
+               </div>
+               <br>
+               <div class="form-group">
+                   <input id="administrative_area_level_2" name="administrative_area_level_2" type="tel" class="form-control"   required disabled="true">
+                   <label for="administrative_area_level_2">District</label>
+               </div>
+               <div class="form-group">
+                   <input id="administrative_area_level_1" name="administrative_area_level_1" type="tel" class="form-control"   required disabled="true">
+                   <label for="administrative_area_level_1">State</label>
+               </div>
+               <br>
+               <div class="form-group">
+                   <input id="country" name="country" type="text" class="form-control"   required disabled="true">
+                   <label for="country">Country</label>
+               </div>
+               <div class="form-group">
+                   <input id="postal_code" name="postal_code" type="tel" class="form-control"   required disabled="true">
+                   <label for="postal_code">Pin Code</label>
+               </div>
+                  -->
                 <br><br>
 
                 <input class="btn btn-lg btn-success btn-block" name="submit" type="submit" value=" signup ">

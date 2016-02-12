@@ -80,6 +80,11 @@ $(function () {
             bootbox.alert('סיסמא צריכה להיות זהה');
             return false;
         }
+        else if($('#accountType').val() == 'null'){
+            $('#accountType').css('background-color','rgba(232, 135, 135, 0.5)');
+            bootbox.alert('חייב לבחור את סוג החשבון') ;
+            return false;
+        }
 
         return true;
     });
